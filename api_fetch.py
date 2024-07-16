@@ -24,11 +24,14 @@ def load_config(config_file='config.yaml'):
     return config
 
 # Function to get a list of US Presidents and their dates of office
-def get_presidents_info(model):
-    prompt = """List all US Presidents, one on each line with no additional information. Ex:
-George Washington
-John Adams"""
-    logging.info("Fetching list of US Presidents.")
+"""
+#prompt =List all US Presidents, one on each line with no additional information. Ex:
+#George Washington
+#John Adams
+"""
+
+def get_presidents_info(model, prompt):
+    logging.info("Fetching list of individuals.")
     try:
         response = client.chat.completions.create(model=model,
         messages=[
@@ -41,7 +44,7 @@ John Adams"""
             if line.strip():  # Skip empty lines
                 president = line.strip()
                 presidents_list.append(president)
-        logging.info("Successfully fetched list of US Presidents.")
+        logging.info("Successfully fetched list.")
         return presidents_list
     except openai.OpenAIError as e:
         logging.error(f"Error fetching presidents info: {e}")
@@ -126,17 +129,20 @@ def write_to_csv(presidents_list, questions, policy_questions, config):
 # Main function
 def main():
     # Load configuration from YAML file
-    config = load_config()
+    config = load_config('config_migov.yaml')
 
     # Get the list of presidents and their dates of office
-    presidents_list = get_presidents_info(config['model'])
+    presidents_list = get_presidents_info(config['model'], config['prompt'])
 
     if not presidents_list:
         logging.error("Failed to retrieve presidents info. Exiting.")
         return
 
     # Write results to CSV
-    write_to_csv(presidents_list, config['questions'], config['policy_questions'], config)
+    if config['ask_policy'] == 'yes':
+        write_to_csv(presidents_list, config['questions'], config['policy_questions'], config)
+    else:
+        write_to_csv(presidents_list, config['questions'], [], config)
 
 if __name__ == "__main__":
     main()

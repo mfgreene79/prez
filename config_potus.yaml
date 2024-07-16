@@ -1,6 +1,5 @@
 model: "gpt-4"
-csv_file: "mi_gov_info_gpt4.csv"
-prompt: "List all Governors of the State of Michigan, one on each line with no additional information. Ex: George Washington\n John Adams\n"
+csv_file: "presidents_info_gpt4.csv"
 questions:
   - key: "Term"
     question: "What was {president}'s term as president? Answer only with a date range. Ex. YYYY-MM-DD to YYYY-MM-DD"
